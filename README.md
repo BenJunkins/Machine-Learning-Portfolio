@@ -1,5 +1,11 @@
 # Machine-Learning-Portfolio
 
+In-progress Projects
+- Spam Filter
+
+Completed Projects
+- [Student Score Prediction](## Student Score Prediction)
+
 ## Student Score Prediction
 
 **Objective**: Developed a machine learning regression model to predict a student's final academic performance (G3 score) to help school advising teams proactively identify at-risk students and allocate intervention resources effectively.
