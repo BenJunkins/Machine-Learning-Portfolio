@@ -4,7 +4,7 @@ In-progress Projects
 - Spam Filter
 
 Completed Projects
-- [Student Score Prediction](Student Score Prediction)
+- [Student Score Prediction](#Student-Score-Prediction)
 
 ## Student Score Prediction
 
