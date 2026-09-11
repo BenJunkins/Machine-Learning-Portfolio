@@ -1,0 +1,6 @@
+# scikit-learn 1.4 is the floor: the notebooks use root_mean_squared_error,
+# which was added in that release.
+scikit-learn>=1.4
+pandas>=2.0
+numpy>=1.26
+jupyter>=1.0

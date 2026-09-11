@@ -1,25 +1,29 @@
-# Machine-Learning-Portfolio
+# Machine Learning Portfolio
 
-In-progress Projects
-- Spam Filter
+Machine learning projects by Benjamin Junkins. Each project folder holds the analysis notebook,
+the data it runs on, and a write-up covering the method, the results, and what those results
+actually support.
 
-Completed Projects
-- [Student Score Prediction](#Student-Score-Prediction)
+## Projects
 
-## Student Score Prediction
+| Project | Problem | Techniques | Headline result |
+| --- | --- | --- | --- |
+| [**Student Score Prediction**](projects/student-score-prediction)<br>*Course project* | Predict secondary school final grades, and test whether it can be done before term grades exist | scikit-learn pipelines, custom transformers, cross-validation, GridSearchCV, Tableau | RMSE 2.09 (R² 0.79) with prior grades, R² 0.05 without — early prediction does not hold up |
 
-**Objective**: Developed a machine learning regression model to predict a student's final academic performance (G3 score) to help school advising teams proactively identify at-risk students and allocate intervention resources effectively.
+Currently working on: a spam filter (text classification).
 
-**Dataset**: Utilized a dataset from the UC Irvine Machine Learning Repository.
+## Skills
 
-#### Methodology & Approach:
+Data cleaning and imputation, feature engineering, custom scikit-learn transformers, pipeline
+and column-transformer construction, cross-validation, hyperparameter tuning, evaluating models
+against a business objective rather than a score alone, and Tableau for exploratory analysis.
 
-**Data Preprocessing & Pipelines**: Built robust data pipelines using scikit-learn, including missing value imputation, scaling, and a custom transformer to engineer features (such as aggregating total absences) and dynamically drop features for testing.
+## Running the code
 
-**Model Exploration**: Tested and evaluated three regression algorithms: Linear Regression, Linear Support Vector Regression (LinearSVR), and Lasso Regression.
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-**Dual-Model Strategy**: Specifically investigated the challenge of predicting final grades both with and without preliminary term grades (G1 and G2). This was done to evaluate the feasibility of early intervention before preliminary grades are even recorded.
-
-**Hyperparameter Tuning**: Employed GridSearchCV to fine-tune LinearSVR model parameters for optimal performance. Hyperparameter tuned are C, max_iter, and tol.
-
-**Skills Demonstrated**: Data Cleaning, Feature Engineering, Custom Scikit-Learn Transformers, Pipeline Construction, Cross-Validation, Hyperparameter Tuning, and Business-Focused Model Evaluation.
+Then open the notebook in whichever project folder you want. Each notebook keeps the outputs
+from its original run, so it can be read through without executing anything.
