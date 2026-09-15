@@ -36,12 +36,16 @@ def html_to_text(content: str):
 
 
 def clean_text(text: str):
-    """Removes quoted replies and swaps links/addresses for placeholder words.
+    """Removes quoted replies and leftover MIME boundaries, and swaps
+    links/addresses for placeholder words.
 
     The ham in the dataset is mostly mailing list posts, so without this the
     model learns list footers and URLs instead of what the email actually says.
+    Some spam also has boundary lines like --DeathToSpamDeathToSpam-- left in
+    the body, which the model would otherwise pick up as a spam word.
     """
     text = re.sub(r"^\s*>.*$", " ", text, flags=re.MULTILINE)
+    text = re.sub(r"^--\S+\s*$", " ", text, flags=re.MULTILINE)
     text = re.sub(r"^.*\bwrote:\s*$", " ", text, flags=re.MULTILINE)
     text = re.sub(r"(https?://|www\.)\S+", " urllink ", text, flags=re.IGNORECASE)
     text = re.sub(r"\S+@\S+\.\w+", " emailaddress ", text)
@@ -113,18 +117,37 @@ def get_emails(data_dir: Path = DATA_DIR):
     spam_files = sorted(spam_dir.iterdir())
 
     X = []
-    number_failed = 0
-    for path in ham_files + spam_files:
-        try:
-            X.append(text_from_file(path))
-        except Exception:
-            X.append("")
-            number_failed += 1
+    y = []
+    seen = set()
+    number_failed = number_empty = number_duplicates = 0
+    labeled_files = [(path, 0) for path in ham_files] + [(path, 1) for path in spam_files]
 
-    y = [0] * len(ham_files) + [1] * len(spam_files)
-    print(f"Loaded {len(ham_files)} ham and {len(spam_files)} spam emails")
-    if number_failed:
-        print(f"{number_failed} files could not be read")
+    for path, label in labeled_files:
+        try:
+            text = text_from_file(path)
+        except Exception:
+            number_failed += 1
+            continue
+
+        # Copies of the same email could land in both the train and test sets
+        # and make the test scores look better than they are
+        key = " ".join(text.split()).lower()
+        if not key:
+            number_empty += 1
+            continue
+        if key in seen:
+            number_duplicates += 1
+            continue
+        seen.add(key)
+
+        X.append(text)
+        y.append(label)
+
+    print(f"Loaded {y.count(0)} ham and {y.count(1)} spam emails")
+    print(
+        f"Skipped {number_duplicates} duplicates, {number_empty} emails with no text "
+        f"and {number_failed} files that could not be read"
+    )
 
     return X, y
 
