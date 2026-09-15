@@ -4,12 +4,16 @@ import joblib
 import scipy.stats as stats
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, fbeta_score, make_scorer
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import make_pipeline
 
 from spam_filter import MODEL_PATH
 from spam_filter.emails import get_emails, split_emails
+
+# Below 1 weights precision over recall. Flagging a real email as spam is worse
+# than letting a spam email through.
+BETA = 0.5
 
 
 def model():
@@ -37,14 +41,14 @@ def model_optimization(model, X: list, y: list):
         param_distributions=param_dist,
         n_iter=20,
         cv=3,
-        scoring="f1",
+        scoring=make_scorer(fbeta_score, beta=BETA),
         n_jobs=-1,
         random_state=42,
         verbose=1,
     )
     search.fit(X, y)
 
-    print(f"Best cross-validation F1: {search.best_score_:.4f}")
+    print(f"Best cross-validation F{BETA}: {search.best_score_:.4f}")
     print("Best parameters:")
     for param, value in search.best_params_.items():
         print(f"  - {param}: {value}")

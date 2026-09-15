@@ -14,9 +14,9 @@ from sklearn.metrics import (
 
 from spam_filter import MODEL_PATH, ROOT_DIR
 from spam_filter.emails import get_emails, split_emails
+from spam_filter.train import BETA
 
 PLOT_PATH = ROOT_DIR / "images" / "evaluation.png"
-beta = 0.5
 
 
 def plot_model_evaluation(model, X_test, y_test):
@@ -27,14 +27,14 @@ def plot_model_evaluation(model, X_test, y_test):
     spam_prob = model.predict_proba(X_test)[:, spam_class_index]
 
     precision, recall, fbeta, support = precision_recall_fscore_support(
-        y_test, y_pred, beta=beta
+        y_test, y_pred, beta=BETA
     )
 
     report_df = pd.DataFrame(
         {
             "Precision": precision,
             "Recall": recall,
-            f"F{beta}-Score": fbeta,
+            f"F{BETA}-Score": fbeta,
             "Support": support,
         },
         index=pd.Index(["Ham (0)", "Spam (1)"]),
