@@ -1,9 +1,2 @@
 # Dataset (download with python -m spam_filter.download)
 data/
-
-__pycache__/
-*.pyc
-.venv/
-venv/
-.vscode/
-.idea/

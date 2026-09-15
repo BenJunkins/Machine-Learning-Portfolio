@@ -1,4 +1,4 @@
-# Spam Classifier
+# Spam Filter
 
 A spam filter built with a TF-IDF vectorizer and a Random Forest from scikit-learn, trained on the
 Apache SpamAssassin public corpus. It comes with a small window where you can paste an email and see
@@ -8,15 +8,17 @@ how likely it is to be spam.
 
 ## Setup
 
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer. This project has its own requirements (scikit-learn is pinned so the
+saved model loads), and all the commands below are run from this folder.
 
-```
+```bash
+cd projects/spam-filter
 pip install -r requirements.txt
 ```
 
 ## Checking an email
 
-```
+```bash
 python -m spam_filter
 ```
 
@@ -28,7 +30,7 @@ A trained model is already included in `models/`, so this works right after inst
 
 ## Training the model yourself
 
-```
+```bash
 python -m spam_filter.download   # downloads the dataset into data/
 python -m spam_filter.train      # searches for the best parameters and saves the model
 python -m spam_filter.evaluate   # prints test set scores and shows the plots below
