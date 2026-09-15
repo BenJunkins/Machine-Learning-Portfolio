@@ -10,7 +10,13 @@ from spam_filter import MODEL_PATH
 from spam_filter.emails import text_from_paste
 
 SPAM_COLOR = "#c62828"
+UNSURE_COLOR = "#b26a00"
 HAM_COLOR = "#2e7d32"
+
+# Newer emails, real and spam alike, often score in this range because the
+# training data is from 2002-2005, so it's shown as unsure instead of a verdict
+UNSURE_LOW = 0.4
+UNSURE_HIGH = 0.6
 
 
 def load_model():
@@ -69,8 +75,15 @@ class SpamFilterApp:
             return "break"
 
         probability = spam_probability(self.model, raw_email)
-        color = SPAM_COLOR if probability >= 0.5 else HAM_COLOR
-        self.result.configure(text=f"{probability:.0%} likely spam", fg=color)
+        result = f"{probability:.0%} likely spam"
+        if probability >= UNSURE_HIGH:
+            color = SPAM_COLOR
+        elif probability >= UNSURE_LOW:
+            result += " (unsure)"
+            color = UNSURE_COLOR
+        else:
+            color = HAM_COLOR
+        self.result.configure(text=result, fg=color)
 
         return "break"
 

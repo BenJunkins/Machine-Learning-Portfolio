@@ -9,7 +9,7 @@ those results actually support.
 | Project | Problem | Techniques | Headline result |
 | --- | --- | --- | --- |
 | [**Student Score Prediction**](projects/student-score-prediction)<br>*Course project* | Predict secondary school final grades, and test whether it can be done before term grades exist | scikit-learn pipelines, custom transformers, cross-validation, GridSearchCV, Tableau | RMSE 2.09 (R² 0.79) with prior grades, R² 0.05 without — early prediction does not hold up |
-| [**Spam Filter**](projects/spam-filter)<br>*Personal project* | Classify emails as spam or ham, with a desktop popup that scores a pasted email | Email parsing, text cleanup, TF-IDF, Random Forest, RandomizedSearchCV, tkinter | 97.7% test accuracy (spam precision 0.97, recall 0.96) on the SpamAssassin corpus |
+| [**Spam Filter**](projects/spam-filter)<br>*Personal project* | Classify emails as spam or ham, with a desktop popup that scores a pasted email | Email parsing, text cleanup, TF-IDF, Random Forest, RandomizedSearchCV, tkinter | 97.4% test accuracy with 1.1% of real emails marked as spam (SpamAssassin corpus, duplicates removed) |
 
 ## Skills
 
