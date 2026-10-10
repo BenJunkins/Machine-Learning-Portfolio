@@ -1,0 +1,7 @@
+# Everything the API needs, plus the tools for testing and linting
+
+-r requirements-api.txt
+
+pytest == 9.1.1
+httpx2 == 2.13.1
+ruff == 0.17.0
