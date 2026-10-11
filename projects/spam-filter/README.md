@@ -153,7 +153,9 @@ spam_filter/
     evaluate.py     test set scores and plots
 tests/
     test_api.py     requests against the API
+    test_cleanup.py the fast text cleanup gives the same output as the original, and stays fast
     test_predict.py label thresholds
+    original_cleanup.py  the cleanup exactly as the model was trained with it
 models/
     spam_classifier.pkl
 images/
@@ -175,6 +177,8 @@ password resets, newsletters and appointment reminders, and modern scams too, of
 40% and 60%, which is why the popup marks that range as unsure instead of calling it either way. The
 percentage is a rough signal, not a guarantee.
 
-The web API is a demo, not a hardened service. Requests are capped at 100,000 characters, but the
-regular expressions that clean the text are slow on some deliberately crafted input, so it should
-not be put on the public internet as it is.
+The web API is a demo, not a hardened service. Requests are capped at 100,000 characters, and the
+text cleanup is tested against input built to slow it down. One slow case is left, inside Python's
+own email parser: a raw email whose Content-Type header carries thousands of parameters takes a few
+seconds. There is also no rate limiting, so both would need attention before it went on the public
+internet.
