@@ -1,0 +1,15 @@
+# Settings for the test runner and the linter.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."] # Lets the tests import spam_filter without installing it as a package
+filterwarnings = [
+    "error::sklearn.exceptions.InconsistentVersionWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"] # pycodestyle, pyflakes, import sorting and likely bugs

@@ -1,2 +1,4 @@
 # Dataset (download with python -m spam_filter.download)
 data/
+.pytest_cache/
+.ruff_cache/
