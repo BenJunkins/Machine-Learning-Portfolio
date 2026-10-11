@@ -1,8 +1,10 @@
 # Spam Filter
 
+[![Spam filter](https://github.com/BenJunkins/Machine-Learning-Portfolio/actions/workflows/spam-filter.yml/badge.svg)](https://github.com/BenJunkins/Machine-Learning-Portfolio/actions/workflows/spam-filter.yml)
+
 A spam filter built with a TF-IDF vectorizer and a Random Forest from scikit-learn, trained on the
 Apache SpamAssassin public corpus. It comes with a small window where you can paste an email and see
-how likely it is to be spam.
+how likely it is to be spam, and a web API that gives the same answer over HTTP.
 
 ![App screenshot](images/app.png)
 
@@ -28,6 +30,50 @@ the share of trees in the forest that voted spam. It shows green below 40%, red 
 anything in between is marked as unsure.
 
 A trained model is already included in `models/`, so this works right after installing the requirements.
+
+## Web API
+
+The same model is served over HTTP with FastAPI. The API has its own, smaller requirements file.
+
+```bash
+pip install -r requirements-api.txt
+uvicorn spam_filter.api:app
+```
+
+Open http://127.0.0.1:8000/docs to try it in the browser, or send a request:
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"email": "Congratulations! You have been selected to receive a FREE $1000 gift card. Click here to claim your prize: http://www.example.com/claim"}'
+```
+
+```json
+{ "spam_probability": 0.7591, "label": "spam" }
+```
+
+| Endpoint        | What it does                                                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /predict` | Takes `{"email": "..."}` (body text or a full raw email) and returns the spam probability and a label: `ham` below 0.4, `spam` at 0.6 and above, `unsure` in between |
+| `GET /health`   | Returns `{"status": "ok"}` once the model is loaded                                                                                                                  |
+| `GET /docs`     | Interactive documentation                                                                                                                                            |
+
+To run it in a container instead:
+
+```bash
+docker build -t spam-filter-api .
+docker run --rm -p 127.0.0.1:8000:8000 spam-filter-api
+```
+
+To run the checks:
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .
+pytest
+```
+
+GitHub Actions runs the same checks on every change, then builds the image and sends it a request.
 
 ## Training the model yourself
 
@@ -61,10 +107,10 @@ don't show up in emails people actually paste in.
 
 On the 1,135 email test set, using a 50% cutoff:
 
-|          | Precision | Recall | Support |
-|----------|-----------|--------|---------|
-| Ham      | 0.976     | 0.989  | 820     |
-| Spam     | 0.970     | 0.937  | 315     |
+|      | Precision | Recall | Support |
+| ---- | --------- | ------ | ------- |
+| Ham  | 0.976     | 0.989  | 820     |
+| Spam | 0.970     | 0.937  | 315     |
 
 Accuracy is 97.4% and ROC AUC is 0.995.
 
@@ -77,7 +123,7 @@ through, so the model already leans toward letting spam through. Moving the cuto
 the other:
 
 | Cutoff | Real emails marked as spam | Spam that gets through |
-|--------|----------------------------|------------------------|
+| ------ | -------------------------- | ---------------------- |
 | 40%    | 13 (1.6%)                  | 10 (3.2%)              |
 | 50%    | 9 (1.1%)                   | 20 (6.3%)              |
 | 60%    | 7 (0.9%)                   | 43 (13.7%)             |
@@ -98,14 +144,20 @@ climbs quickly at first (0.865 to 0.913 going from 726 to 1,452 training emails)
 
 ```
 spam_filter/
+    api.py          web API
     app.py          popup window
+    predict.py      loading the model and scoring an email
     download.py     downloads the SpamAssassin corpus
     emails.py       email parsing, text cleanup, loading the dataset
     train.py        parameter search and saving the model
     evaluate.py     test set scores and plots
+tests/
+    test_api.py     requests against the API
+    test_predict.py label thresholds
 models/
     spam_classifier.pkl
 images/
+Dockerfile
 ```
 
 ## Dataset
@@ -122,3 +174,7 @@ The emails are from 2002 to 2005 and most of the ham is from tech mailing lists.
 password resets, newsletters and appointment reminders, and modern scams too, often score between
 40% and 60%, which is why the popup marks that range as unsure instead of calling it either way. The
 percentage is a rough signal, not a guarantee.
+
+The web API is a demo, not a hardened service. Requests are capped at 100,000 characters, but the
+regular expressions that clean the text are slow on some deliberately crafted input, so it should
+not be put on the public internet as it is.
