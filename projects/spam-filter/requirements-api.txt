@@ -1,0 +1,8 @@
+# What the web API needs to run
+# scikit-learn is pinned to the version that saved models/spam_classifier.pkl
+
+scikit-learn == 1.9.0
+numpy >= 2.0
+joblib >= 1.4
+fastapi == 0.143.0
+uvicorn[standard] == 0.54.0

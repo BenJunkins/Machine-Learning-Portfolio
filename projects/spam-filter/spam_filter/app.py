@@ -4,34 +4,12 @@ import ctypes
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-import joblib
-
 from spam_filter import MODEL_PATH
-from spam_filter.emails import text_from_paste
+from spam_filter.predict import UNSURE_HIGH, UNSURE_LOW, load_model, spam_probability
 
 SPAM_COLOR = "#c62828"
 UNSURE_COLOR = "#b26a00"
 HAM_COLOR = "#2e7d32"
-
-# Newer emails, real and spam alike, often score in this range because the
-# training data is from 2002-2005, so it's shown as unsure instead of a verdict
-UNSURE_LOW = 0.4
-UNSURE_HIGH = 0.6
-
-
-def load_model():
-    model = joblib.load(MODEL_PATH)
-    # Only one email is scored at a time, so extra threads just add overhead
-    model.set_params(randomforestclassifier__n_jobs=1)
-
-    return model
-
-
-def spam_probability(model, raw_email: str):
-    spam_class_index = list(model.classes_).index(1)
-    text = text_from_paste(raw_email)
-
-    return model.predict_proba([text])[0][spam_class_index]
 
 
 class SpamFilterApp:
@@ -49,7 +27,12 @@ class SpamFilterApp:
         text_frame = ttk.Frame(frame)
         text_frame.pack(fill="both", expand=True, pady=(4, 8))
         self.text = tk.Text(
-            text_frame, width=70, height=18, wrap="word", undo=True, font=("Segoe UI", 10)
+            text_frame,
+            width=70,
+            height=18,
+            wrap="word",
+            undo=True,
+            font=("Segoe UI", 10),
         )
         scrollbar = ttk.Scrollbar(text_frame, command=self.text.yview)
         self.text.configure(yscrollcommand=scrollbar.set)
