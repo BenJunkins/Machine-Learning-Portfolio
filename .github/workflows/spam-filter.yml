@@ -78,3 +78,29 @@ jobs:
       - name: Stop the container
         if: always()
         run: docker rm -f api
+
+  publish:
+    name: Publish the image
+    runs-on: ubuntu-latest
+    needs: docker
+    # Only for changes that have landed on main, never for a pull request
+    if: github.ref == 'refs/heads/main'
+    # This job alone may write to the container registry
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/benjunkins/spam-filter-api
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Log in to the GitHub container registry
+        run: echo "$TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the image
+        run: docker build -t "$IMAGE:latest" -t "$IMAGE:$GITHUB_SHA" .
+
+      - name: Push it
+        run: docker push --all-tags "$IMAGE"
