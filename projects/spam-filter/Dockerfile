@@ -1,5 +1,10 @@
 FROM python:3.12-slim
 
+# The first label links the published image to this repo on GitHub.
+# The second is the description shown on the image's page
+LABEL org.opencontainers.image.source="https://github.com/BenJunkins/Machine-Learning-Portfolio" \
+      org.opencontainers.image.description="Spam filter web API: a TF-IDF and Random Forest model served with FastAPI"
+
 # Don't write .pyc files, and print log lines straight away instead of buffering them
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

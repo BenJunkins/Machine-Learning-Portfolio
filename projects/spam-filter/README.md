@@ -58,7 +58,13 @@ curl -X POST http://127.0.0.1:8000/predict \
 | `GET /health`   | Returns `{"status": "ok"}` once the model is loaded                                                                                                                  |
 | `GET /docs`     | Interactive documentation                                                                                                                                            |
 
-To run it in a container instead:
+To run it in a container instead, with nothing installed but Docker:
+
+```bash
+docker run --rm -p 127.0.0.1:8000:8000 ghcr.io/benjunkins/spam-filter-api
+```
+
+That image is built and published by GitHub Actions. To build it yourself:
 
 ```bash
 docker build -t spam-filter-api .
@@ -74,6 +80,7 @@ pytest
 ```
 
 GitHub Actions runs the same checks on every change, then builds the image and sends it a request.
+When a change lands on `main`, it also publishes the image to the GitHub container registry.
 
 ## Training the model yourself
 
